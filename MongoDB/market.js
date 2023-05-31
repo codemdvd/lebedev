@@ -155,7 +155,6 @@ db.wine.insertMany([
         alcohol: 12.5,
         capacity: 0.75,
         description: 'Varieties: Cabernet\nFrancAllergens: Contains sulfites',
-        price: 6.85,
         items_left: 50
     }
 ]);

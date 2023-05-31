@@ -9,11 +9,10 @@ services:
       POSTGRES_PASSWORD: qwerty1234
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-      POSTGRES_EXTENSIONS: pgcrypto
     ports:
       - 5432:5432
     volumes:
-     - ../PostgreSQL:/docker-entrypoint-initdb.d
+     - ../PostgreSQL/database_dump.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   mongo:
     image: mongo:latest
