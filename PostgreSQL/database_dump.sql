@@ -17,15 +17,15 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: admin78; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: employees; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE admin78;
+CREATE DATABASE employees;
 
 
-ALTER DATABASE admin78 OWNER TO postgres;
+ALTER DATABASE employees OWNER TO postgres;
 
-\connect admin78
+\connect employees
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -58,12 +58,13 @@ ALTER TABLE public.departments OWNER TO postgres;
 -- Name: employees; Type: TABLE; Schema: public; Owner: postgres
 --
 
+-- INCREASED NUMBER OF CHARACTER OF emp_pass TO 50 (hash requires 50)
 CREATE TABLE public.employees (
     emp_id integer NOT NULL,
     first_name character varying(30),
     second_name character varying(30),
     emp_login character varying(30),
-    emp_pass character varying(30),
+    emp_pass character varying(50),
     emp_phone character varying(17),
     emp_email character varying(40),
     dept_no character(4)
@@ -134,15 +135,15 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: admin78_order; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: orders; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE admin78_order;
+CREATE DATABASE orders;
 
 
-ALTER DATABASE admin78_order OWNER TO postgres;
+ALTER DATABASE orders OWNER TO postgres;
 
-\connect admin78_order
+\connect orders
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -163,13 +164,16 @@ SET default_table_access_method = heap;
 -- Name: clients; Type: TABLE; Schema: public; Owner: postgres
 --
 
+-- CHANGED pass FIELD TO client_password AS WELL AS log TO client_login
+-- CHANGED phone_number TYPE TO character varying(17)
+-- INCREASED NUMBER OF CHARACTER OF client_password TO 50 (hash requires 50)
 CREATE TABLE public.clients (
     client_id integer NOT NULL,
     first_name character varying(30),
     second_name character varying(30),
-    log character varying(30),
-    pass character varying(30),
-    phone_number character varying(18),
+    client_login character varying(30),
+    client_password character varying(50),
+    phone_number character varying(17),
     email character varying(40)
 );
 
