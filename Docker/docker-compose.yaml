@@ -12,7 +12,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-     - ../PostgreSQL/database_dump.sql:/docker-entrypoint-initdb.d/init.sql:ro
+     - ../PostgreSQL:/docker-entrypoint-initdb.d
 
   mongo:
     image: mongo:latest
