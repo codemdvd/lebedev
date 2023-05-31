@@ -42,7 +42,6 @@ class OrderTable(Base):
     __tablename__ = 'order_table'
     order_id = Column('order_id', Integer, primary_key=True)
     address = Column('address', String(70))
-    total_price = Column('total_price', Numeric(100, 2))
     creation_date = Column('creation_date', Date)
     payment_date = Column('payment_date', Date)
     payed = Column('payed', Boolean)
