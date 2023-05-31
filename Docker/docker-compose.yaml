@@ -17,6 +17,13 @@ services:
   mongo:
     image: mongo:latest
     container_name: practice_mongo
+    command: --auth
     restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: qwerty1234
+      MONGO_INITDB_DATABASE: products
     ports:
       - 27017:27017
+    volumes:
+      - ../MongoDB/market.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
