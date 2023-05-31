@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}
+Orders
+{% endblock %}
+{% block content %}
+<div class="features flex_box">
+<form action="#", method="get" class="form flex_box">
+    <div class="warn_conteiner flex_box">
+    {% for order in orders %}
+        <div class="warning flex_box">
+            <h2>Номер заказа: {{order.order_id}}</h2>
+            <p>Адрес: {{order.address}}</p> 
+            <p>Итоговая цена: {{order.total_price}}</p> 
+            <p>Дата создания заказа: {{order.creation_date}}</p> 
+            <p>Состав заказа: {{order.order_list}}</p> 
+            <p>Оплачено: {{order.payed}}</p> 
+            <p>Дата оплаты: {{order.payment_date}}</p> 
+            <p>ID Клиента: {{order.client_id}}</p> 
+        </div>
+    {% endfor %}
+    </div>
+</form>
+</div>
+{% endblock %}
