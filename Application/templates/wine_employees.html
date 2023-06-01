@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}
+Employees
+{% endblock %}
+{% block content %}
+<form action="#", method="get">
+    <section class="listings">
+		<div class="wrapper">
+			<ul class="properties_list">
+    {% for employee in employees %}
+	<li>
+        <div class="property_details">
+            <h1>
+                <a href="#">{{employee.emp_id}} : {{employee.first_name}} {{employee.second_name}}</a> 
+            </h1>
+            <h2>Login: {{employee.emp_login}}</h2> 
+            <h2>Phone number: {{employee.emp_phone}}</h2> 
+            <h2>Email: {{employee.emp_email}}</h2> 
+            <h2>Department: {{employee.dept_no}}</h2> 
+        </div>
+    </li>
+    {% endfor %}
+</div>
+</section>
+</form>
+{% endblock %}

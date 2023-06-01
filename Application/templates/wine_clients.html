@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}
+Clients
+{% endblock %}
+{% block content %}
+<form action="#", method="get">
+    <section class="listings">
+		<div class="wrapper">
+			<ul class="properties_list">
+    {% for client in clients %}
+	<li>
+        <div class="property_details">
+            <h1>
+                <a href="#">{{client.client_id}} : {{client.first_name}} {{client.second_name}}</a> 
+            </h1>
+            <h2>Login: {{client.log}}</h2> 
+            <h2>Phone number: {{client.phone_number}}</h2> 
+            <h2>Email: {{client.email}}</h2> 
+        </div>
+    </li>
+    {% endfor %}
+</div>
+</section>
+</form>
+{% endblock %}

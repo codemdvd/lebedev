@@ -3,13 +3,13 @@
 
 {% endblock %}
 {% block content %}
-<div class="features">
+<div class="content">
     <h1 class="h_h">Информация по заказу</h1>
     <form class="form">
         {% if order_product %}
         {% for el in order_product %}
-            <div class="warning">
-                <h3 class="info">Номер заказа: {{ el.order }}</h3>
+            <div class="employee">
+                <h3 class="name">Номер заказа: {{ el.order }}</h3>
                 <p class="info">ID детали: {{ el.product }}</p>
                 <p class="info">Количество комплектов: {{ el.amount }}</p>
             </div>

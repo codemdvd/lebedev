@@ -4,28 +4,92 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
+
+	<script type="text/javascript" src="/static/js/jquery.js"></script>
+	<script type="text/javascript" src="/static/js/main.js"></script>
 </head>
-<body class="back flex_box">
-    <div class="flex_box user_position">
+<body>
+    <section class="hero">
+		<header>
+			<div class="wrapper">
+    <!-- <div class="flex_box user_position">
                 <li class="user flex_box">Тут будет юзернейм</li> 
                 <a class="blank_link"><button type="button" class="w">Выйти</button></a>
-    </div>
-                
-        <div class="top-pannel flex_box">
-            <div class="btns">
-                <a><button type="submit" class="btn-new">Заказы</button></a>
-                <a><button type="submit" class="btn-new">Клиенты</button></a>
-                <a><button type="submit" class="btn-new">Сотрудники</button></a>
-                <a><button type="submit" class="btn-new">Товар</button></a>
-            </div>
-        </div>
-        <div class="main flex_box">
-            <div class = "content flex_box">
+    </div> -->
+    <nav>
+        <ul>
+            <li><a href="{{url_for('orders')}}">Заказы</a></li>
+                <li><a href="{{url_for('clients')}}">Клиенты</a></li>
+                <li><a href="{{url_for('employees')}}">Сотрудники</a></li>
+                <li><a href="{{url_for('products')}}">Товар</a></li>
+                <li><a href="{{url_for('shopping_cart')}}">&#128722</a></li>
+            </ul>
+            <a href="#" class="login_btn">Login</a>
+        </nav>
+			</div>
+		</header><!--  end header section  -->
+
+			<section class="caption">
+				<h2 class="caption">Drink with love in your heart</h2>
+				<h3 class="properties">Wine store</h3>
+			</section>
+	</section>
                 {% block content %}
                 {% endblock %}
-            </div>
-        </div>
     <!-- <h1 class="info">Вы не вошли в аккаунт</h1>
     <a><button type="button" class="btn-new">Войти в аккаунт</button></a> -->
+
+    <footer>
+		<div class="wrapper footer">
+			<ul>
+				<li class="links">
+					<ul>
+						<li><a href="#">About</a></li>
+						<li><a href="#">Support</a></li>
+						<li><a href="#">Terms</a></li>
+						<li><a href="#">Policy</a></li>
+						<li><a href="#">Contact</a></li>
+					</ul>
+				</li>
+
+				<li class="links">
+					<ul>
+						<li><a href="#">Appartements</a></li>
+						<li><a href="#">Houses</a></li>
+						<li><a href="#">Villas</a></li>
+						<li><a href="#">Mansions</a></li>
+						<li><a href="#">...</a></li>
+					</ul>
+				</li>
+
+				<li class="links">
+					<ul>
+						<li><a href="#">New York</a></li>
+						<li><a href="#">Los Anglos</a></li>
+						<li><a href="#">Miami</a></li>
+						<li><a href="#">Washington</a></li>
+						<li><a href="#">...</a></li>
+					</ul>
+				</li>
+
+				<li class="about">
+					<p>We are passionate about crafting high-quality wines that will satisfy even the most discerning palate. Our winery is located in a beautiful region that has the perfect climate and soil for producing exceptional grapes.</p>
+					<ul>
+						<li><a href="http://facebook.com/pixelhint" class="facebook" target="_blank"></a></li>
+						<li><a href="http://twitter.com/pixelhint" class="twitter" target="_blank"></a></li>
+						<li><a href="http://plus.google.com/+Pixelhint" class="google" target="_blank"></a></li>
+						<li><a href="#" class="skype"></a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+		<div class="copyrights wrapper">
+			Copyright © 2023 <a href="#" target="_blank" class="ph_link" title="Download more free Templates">winegoods.com</a>. All Rights Reserved.
+		</div>
+	</footer><!--  end footer  -->
 </body>
 </html>
