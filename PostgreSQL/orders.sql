@@ -1,4 +1,3 @@
-
 --
 -- PostgreSQL database dump
 --
@@ -142,4 +141,15 @@ CREATE TRIGGER add_client_account
     ON public.clients
     FOR EACH ROW
 EXECUTE PROCEDURE public.on_add_client_account();
+
+CREATE FUNCTION auth_client_correct(username text, pass text) RETURNS boolean
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RETURN (SELECT client_password = crypt(pass, client_password) AS success
+            FROM clients
+            WHERE client_login = username);
+end;
+$$;
 

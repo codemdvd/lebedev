@@ -13,21 +13,14 @@
                     <p class="incorrect_input">{{invalid}}</p>
         
                     <div class="input">
-                        <p>Login<input type="text" placeholder="Enter Username" name="uname" required></p>
+                        <p>Login<input type="text" placeholder="Enter Username" name="username" required></p>
                     </div>
         
                     <div class="input">
-                        <p>Password<input type="password" placeholder="Enter Password" name="psw" minlength="4" required></p>
-                    </div>
-        
-                    <div class="input">
-                        <p>Phone number<input type="text" placeholder="+X..." name="ph_number" pattern="^+[0-9]{, 20}$" required></p>
-                    </div>
-        
-                    <div class="input">
-                        <p>Email<input type="text" placeholder="Enter email" name="email" pattern="^[a-zA-Z0-9.\-\_]{,20}@[a-zA-Z0-9.\-\_]$" required></p>
+                        <p>Password<input type="password" placeholder="Enter Password" name="password" minlength="4" required></p>
                     </div>
                     <button class type="submit">Login</button>
+                    <a href="{{url_for('login')}}">Login as client</a>
                 </div>
             </form>
         </div>

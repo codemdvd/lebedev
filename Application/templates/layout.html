@@ -21,13 +21,19 @@
     </div> -->
     <nav>
         <ul>
-            <li><a href="{{url_for('orders')}}">Заказы</a></li>
-                <li><a href="{{url_for('clients')}}">Клиенты</a></li>
-                <li><a href="{{url_for('employees')}}">Сотрудники</a></li>
-                <li><a href="{{url_for('products')}}">Товар</a></li>
+            <li><a href="{{url_for('orders')}}">Orders</a></li>
+                <li><a href="{{url_for('clients')}}">Clients</a></li>
+                <li><a href="{{url_for('employees')}}">Employees</a></li>
+                <li><a href="{{url_for('products')}}">Products</a></li>
                 <li><a href="{{url_for('shopping_cart')}}">&#128722</a></li>
             </ul>
-            <a href="#" class="login_btn">Login</a>
+			{% if not logged_in %}
+            <a href="{{url_for('login')}}" class="login_btn">Login</a>
+			{% else %}
+			<!--TODO fix the position of theese buttons-->
+			<a href="#" class="login_btn">{{username}}</a>
+			<a href="{{url_for('logout')}}" class="login_btn">Logout</a>
+			{% endif %}
         </nav>
 			</div>
 		</header><!--  end header section  -->

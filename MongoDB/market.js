@@ -163,3 +163,5 @@ db.wine.insertMany([
         items_left: 50
     }
 ]);
+
+db.wine.createIndex({article: 'text', name: 'text', winery: 'text', country: 'text', region: 'text'});

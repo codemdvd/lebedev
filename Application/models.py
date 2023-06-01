@@ -1,11 +1,8 @@
 
 from sqlalchemy import Column
-from sqlalchemy import String, Integer, Numeric, Date, Boolean, JSON
+from sqlalchemy import String, Integer, Date, Boolean, JSON
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import declarative_base
-
-from sqlalchemy import URL, create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 
 Base = declarative_base()
 
