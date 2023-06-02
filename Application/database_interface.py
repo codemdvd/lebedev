@@ -61,7 +61,6 @@ def client_register(
         orders_session.commit()
         return 0
     except Exception as e:
-        print(e.with_traceback())
         return 1
 
 
