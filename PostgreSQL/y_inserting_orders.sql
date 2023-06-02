@@ -5,15 +5,20 @@ VALUES (1, 'Asap', 'Rocky', 'asaprocky', 'qwerty1234', '+17777777777', 'asap_roc
        (2, 'Travis', 'Scott', 'travisscott', 'qwerty1234', '+11111111111', 'travis_scott@gmail.com');
 
 INSERT INTO public.order_table
-VALUES (1, 'West Coast, LA', '2023-05-14', '2023-05-14', TRUE, '{
-  "137816": {
-    "price": 6.85,
-    "amount": 5
-  }
-}', 2),
-       (2, 'East Coast, NY', '2023-05-16', '2023-05-16', TRUE, '{
-         "137816": {
-           "price": 6.85,
-           "amount": 8
-         }
-       }', 1);
+VALUES 
+  (1, 'West Coast, LA', '2023-05-14', '2023-05-14', TRUE, '{
+    "137816": {
+      "price": 6.85,
+      "amount": 5
+    }
+  }', 2),
+  (2, 'East Coast, NY', '2023-05-16', '2023-05-16', TRUE, '{
+    "137816": {
+      "price": 6.85,
+      "amount": 8
+    },
+    "829044": {
+      "price": 17.44,
+      "amount": 3
+    }
+  }', 1);

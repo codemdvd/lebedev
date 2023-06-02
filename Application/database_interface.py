@@ -38,3 +38,23 @@ def client_authorize(username: str, password: str):
 def search_wine(string: str, limit: int):
     wines = wine_products.find({'$text': {'$search': string}}).limit(limit)
     return wines
+
+
+# Client methods
+def get_my_orders(username: str):
+    orders = orders_session.query(OrderTable).join(Clients).where(Clients.log == username).all()
+    return orders
+
+def get_order_info(username: str, order_id: int):
+    if username:
+        order = orders_session.query(OrderTable).join(Clients)\
+            .where(Clients.log == username and OrderTable.order_id == order_id).first()
+    else:
+        order = order = orders_session.query(OrderTable).join(Clients)\
+            .where(OrderTable.order_id == order_id).first()
+        
+    return order
+
+def get_product_info(product_id: str):
+    product = wine_products.find_one({'article': product_id})
+    return product

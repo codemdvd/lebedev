@@ -74,7 +74,7 @@ CREATE TABLE public.order_table
     address       character varying(70),
     creation_date date,
     payment_date  date,
-    payed         boolean,
+    paid         boolean,
     order_list    json,
     client_id     integer
 );
@@ -142,7 +142,7 @@ CREATE TRIGGER add_client_account
     FOR EACH ROW
 EXECUTE PROCEDURE public.on_add_client_account();
 
-CREATE FUNCTION auth_client_correct(username text, pass text) RETURNS boolean
+CREATE FUNCTION public.auth_client_correct(username text, pass text) RETURNS boolean
     LANGUAGE plpgsql
 AS
 $$

@@ -41,6 +41,6 @@ class OrderTable(Base):
     address = Column('address', String(70))
     creation_date = Column('creation_date', Date)
     payment_date = Column('payment_date', Date)
-    payed = Column('payed', Boolean)
+    paid = Column('paid', Boolean)
     order_list = Column('order_list', JSON)
     client_id = Column('client_id', Integer, ForeignKey('clients.client_id'))

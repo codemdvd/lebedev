@@ -137,7 +137,7 @@ CREATE TRIGGER add_employee_account
 EXECUTE PROCEDURE public.on_add_employee_account();
 
 
-CREATE FUNCTION auth_employee_correct(username text, pass text) RETURNS boolean
+CREATE FUNCTION public.auth_employee_correct(username text, pass text) RETURNS boolean
     LANGUAGE plpgsql AS
 $$
 BEGIN

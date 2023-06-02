@@ -164,4 +164,21 @@ db.wine.insertMany([
     }
 ]);
 
+db.wine.insertMany([
+    {
+        article: '829044',
+        name: 'Vi de Vila Cims de Porrera',
+        type: 'Red Unfortified still wines',
+        country: 'Spain',
+        region: 'D.O.Q. Priorat',
+        vintage_dating: 2017,
+        winery: 'Cims De Porrera',
+        alcohol: Double(15),
+        capacity: 0.75,
+        description: 'Varieties: Carinyena / Mazuelo, Garnatxa\nNegraAllergens: Contains sulfites',
+        price: 17.44,
+        items_left: 50
+    }
+]);
+
 db.wine.createIndex({article: 'text', name: 'text', winery: 'text', country: 'text', region: 'text'});
