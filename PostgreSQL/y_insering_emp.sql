@@ -8,6 +8,6 @@ VALUES ('SLDP', 'Sales department'),
        ('LGDP', 'Logistig department'),
        ('MNDP', 'Company managment');
 
-INSERT INTO public.employees
-VALUES (1, 'Prokhor', 'Kotov', '@prokhorkot', 'qwerty1234', '+77777777777', 'kotprokhor@gmail.com', 'MNDP'),
-       (2, 'Vasily', 'Apasov', '@codemdvd', 'qwerty1234', '+78888888888', 'codemdvd@gmail.com', 'MNDP');
+INSERT INTO public.employees(first_name, second_name, emp_login, emp_pass, emp_phone, emp_email, dept_no)
+VALUES ('Prokhor', 'Kotov', '@prokhorkot', 'qwerty1234', '+77777777777', 'kotprokhor@gmail.com', 'MNDP'),
+       ('Vasily', 'Apasov', '@codemdvd', 'qwerty1234', '+78888888888', 'codemdvd@gmail.com', 'MNDP');

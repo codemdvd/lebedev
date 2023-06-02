@@ -61,9 +61,10 @@ ALTER TABLE public.departments
 --
 
 -- INCREASED NUMBER OF CHARACTER OF emp_pass TO 50 (hash requires 50)
+CREATE SEQUENCE public.emp_id_seq;
 CREATE TABLE public.employees
 (
-    emp_id      integer NOT NULL,
+    emp_id      integer DEFAULT nextval('public.emp_id_seq') NOT NULL,
     first_name  character varying(30),
     second_name character varying(30),
     emp_login   character varying(30),
@@ -72,6 +73,8 @@ CREATE TABLE public.employees
     emp_email   character varying(40),
     dept_no     character(4)
 );
+
+ALTER SEQUENCE public.emp_id_seq OWNED BY public.employees.emp_id;
 
 
 ALTER TABLE public.employees

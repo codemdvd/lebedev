@@ -1,6 +1,6 @@
 
 from sqlalchemy import Column
-from sqlalchemy import String, Integer, Date, Boolean, JSON
+from sqlalchemy import String, Integer, Date, Boolean, JSON, Sequence
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import declarative_base
 
@@ -14,7 +14,7 @@ class Departments(Base):
 
 class Employees(Base):
     __tablename__ = 'employees'
-    emp_id = Column('emp_id', Integer, primary_key=True)
+    emp_id = Column('emp_id', Integer, Sequence('emp_id_seq'), primary_key=True)
     first_name = Column('first_name', String(30))
     second_name = Column('second_name', String(30))
     emp_login = Column('emp_login', String(30))
@@ -26,7 +26,7 @@ class Employees(Base):
 
 class Clients(Base):
     __tablename__ = 'clients'
-    client_id = Column('client_id', Integer, primary_key=True)
+    client_id = Column('client_id', Integer, Sequence('client_id_seq'), primary_key=True)
     first_name = Column('first_name', String(30))
     second_name = Column('second_name', String(30))
     log = Column('client_login', String(30))
@@ -37,7 +37,7 @@ class Clients(Base):
 
 class OrderTable(Base):
     __tablename__ = 'order_table'
-    order_id = Column('order_id', Integer, primary_key=True)
+    order_id = Column('order_id', Integer, Sequence('order_id_seq'), primary_key=True)
     address = Column('address', String(70))
     creation_date = Column('creation_date', Date)
     payment_date = Column('payment_date', Date)

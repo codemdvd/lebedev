@@ -78,6 +78,31 @@ def login_admin():
 
      return redirect(url_for('manage_employees'))
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+     if request.method == 'GET':
+          return render_template('register.html')
+     if request.method != 'POST': return
+
+     first_name = request.form['first_name']
+     second_name = request.form['second_name']
+     phone_number = request.form['phone_number']
+     email = request.form['email']
+     username = request.form['username']
+     password = request.form['password']
+
+     result = client_register(first_name, second_name, phone_number, 
+                     email, username, password)
+     
+     if result:
+          return render_template('register.html')
+     
+     session['username'] = username
+     session['admin'] = False
+     session['logged_in'] = True
+     return redirect(url_for('products'))
+
+
 @app.route('/logout')
 def logout():
      session.clear()
@@ -157,6 +182,17 @@ def manage_employees():
 def manage_products():
      all_products = wine_products.find()
      return render_template('manage_wine_products.html', products=all_products,
+                            username=session.get('username', None))
+
+
+
+## TODO make a creation form for a new product
+## TODO fix user log out on this page
+
+@app.route('/new_product')
+@requires_admin
+def new_product():
+     return render_template('manage_wine_new_product.html',
                             username=session.get('username', None))
 
 if __name__ == '__main__':

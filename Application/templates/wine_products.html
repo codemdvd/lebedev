@@ -6,7 +6,9 @@ Products
 <form action="#" , method="get">
     <section class="listings">
         <div class="wrapper">
-            <input type="text" placeholder="Search wine" name="search">
+            <div class="search_fields">
+                <input type="text" placeholder="Search wine" name="search" class="float">
+            </div>    
             <ul class="properties_list">
                 {% for product in products %}
                 <li>
@@ -24,6 +26,7 @@ Products
                             {% endfor %}
                             <h2>Price: {{product['price']}}</h2>
                             <h2>Items left: {{product['items_left']}}</h2>
+                            <a href="#" class="more_listing_btn">Add to cart</a>
                     </div>
                 </li>
                 {% endfor %}

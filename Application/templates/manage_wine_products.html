@@ -4,15 +4,19 @@ Products
 {% endblock %}
 {% block content %}
 <form action="#" , method="get">
+    <section class="search">
+		<div class="wrapper">
+				<input type="text" id="search" name="search" placeholder="What are you looking for?"/>
+		</div>
     <section class="listings">
-        <div class="wrapper">
-            <input type="text" placeholder="Search wine" name="search">
+        <div class="wrapper">  
             <ul class="properties_list">
                 {% for product in products %}
                 <li>
                     <div class="property_details">
                         <h1>
                             <a href="#">{{product['article']}} : {{product['name']}}</a>
+                        </h1>
                             <h2>Type: {{product['type']}}</h2>
                             <h2>Country: {{product['country']}}</h2>
                             <h2>Vintage dating: {{product['vintage_dating']}}</h2>
@@ -28,6 +32,9 @@ Products
                 </li>
                 {% endfor %}
             </ul>
+            <div class="more_listing">
+                <a href="{{url_for('new_product')}}" class="more_listing_btn">New product</a>
+            </div>
         </div>
     </section>
 {% endblock %}

@@ -49,9 +49,11 @@ SET default_table_access_method = heap;
 -- CHANGED pass FIELD TO client_password AS WELL AS log TO client_login
 -- CHANGED phone_number TYPE TO character varying(17)
 -- INCREASED NUMBER OF CHARACTER OF client_password TO 50 (hash requires 50)
+
+CREATE SEQUENCE public.client_id_seq;
 CREATE TABLE public.clients
 (
-    client_id       integer NOT NULL,
+    client_id       integer DEFAULT nextval('public.client_id_seq') NOT NULL,
     first_name      character varying(30),
     second_name     character varying(30),
     client_login    character varying(30),
@@ -59,6 +61,7 @@ CREATE TABLE public.clients
     phone_number    character varying(17),
     email           character varying(40)
 );
+ALTER SEQUENCE public.client_id_seq OWNED BY public.clients.client_id;
 
 
 ALTER TABLE public.clients
@@ -68,9 +71,10 @@ ALTER TABLE public.clients
 -- Name: order_table; Type: TABLE; Schema: public; Owner: postgres
 --
 
+CREATE SEQUENCE public.order_id_seq;
 CREATE TABLE public.order_table
 (
-    order_id      integer NOT NULL,
+    order_id      integer DEFAULT nextval('public.order_id_seq') NOT NULL,
     address       character varying(70),
     creation_date date,
     payment_date  date,
@@ -78,6 +82,7 @@ CREATE TABLE public.order_table
     order_list    json,
     client_id     integer
 );
+ALTER SEQUENCE public.order_id_seq OWNED BY public.order_table.order_id;
 
 
 ALTER TABLE public.order_table
