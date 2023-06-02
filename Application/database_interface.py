@@ -39,6 +39,31 @@ def search_wine(string: str, limit: int):
     wines = wine_products.find({'$text': {'$search': string}}).limit(limit)
     return wines
 
+def client_register(
+    first_name: str,
+    second_name: str,
+    phone_number: str,
+    email: str,
+    login: str,
+    password: str
+):
+    try:
+        client = Clients(
+            first_name=first_name,
+            second_name=second_name,
+            log=login,
+            password=password,
+            phone_number=phone_number,
+            email=email
+        )
+
+        orders_session.add(client)
+        orders_session.commit()
+        return 0
+    except Exception as e:
+        print(e.with_traceback())
+        return 1
+
 
 # Client methods
 def get_my_orders(username: str):
