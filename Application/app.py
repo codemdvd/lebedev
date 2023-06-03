@@ -185,15 +185,69 @@ def manage_products():
                             username=session.get('username', None))
 
 
-
-## TODO make a creation form for a new product
-## TODO fix user log out on this page
-
-@app.route('/new_product')
+@app.route('/new_product', methods=('GET', 'POST'))
 @requires_admin
 def new_product():
+     if request.method=='POST':
+          article = request.form['article']
+          name = request.form['name']
+          type = request.form['type']
+          country = request.form['country']
+          region = request.form['region']
+          vintage_dating = int(request.form['vintage_dating'])
+          winery = request.form['winery']
+          alcohol = request.form['alcohol']
+          capacity = request.form['capacity']
+          description = request.form['description']
+          price = request.form['price']
+          items_left = int(request.form['items_left'])
+
+          wine_products.insert_one(
+               {
+                    'article': article,
+                    'name': name,
+                    'type': type,
+                    'country': country,
+                    'region': region,
+                    'vintage_dating': vintage_dating,
+                    'winery': winery,
+                    'alcohol': float(alcohol),
+                    'capacity': float(capacity),
+                    'description': description,
+                    'price': float(price),
+                    'items_left': items_left
+               }
+          )
      return render_template('manage_wine_new_product.html',
                             username=session.get('username', None))
 
+@app.route('/new_employee', methods=('GET', 'POST'))
+@requires_admin
+def new_employee():
+     if request.method=='POST':
+          emp_id = request.form['emp_id']
+          first_name = request.form['first_name']
+          second_name = request.form['second_name']
+          emp_login = request.form['emp_login']
+          emp_pass = request.form['emp_pass']
+          emp_phone = request.form['emp_phone']
+          emp_email = request.form['emp_email']
+          dept_no = request.form['dept_no']
+
+          employee = Employees(
+                              emp_id=emp_id, 
+                              first_name=first_name, 
+                              second_name=second_name,
+                              emp_login=emp_login,
+                              emp_pass=emp_pass,
+                              emp_phone=emp_phone,
+                              emp_email=emp_email,
+                              dept_no=dept_no
+                               )
+          employees_session.add(employee)
+          employees_session.commit()
+
+     return render_template('manage_wine_new_employee.html',
+                            username=session.get('username', None))
 if __name__ == '__main__':
     app.run(debug=True)

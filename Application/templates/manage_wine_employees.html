@@ -20,7 +20,11 @@ Employees
         </div>
     </li>
     {% endfor %}
-</div>
-</section>
+            </ul>
+            <div class="more_listing">
+                <a href="{{url_for('new_employee')}}" class="more_listing_btn">New employee</a>
+            </div>
+        </div>
+    </section>
 </form>
 {% endblock %}

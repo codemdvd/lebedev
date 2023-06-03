@@ -15,10 +15,6 @@
     <section class="hero">
 		<header>
 			<div class="wrapper">
-    <!-- <div class="flex_box user_position">
-                <li class="user flex_box">Тут будет юзернейм</li> 
-                <a class="blank_link"><button type="button" class="w">Выйти</button></a>
-    </div> -->
     <nav>
         <ul>
             <li><a href="{{url_for('manage_orders')}}">Orders</a></li>
@@ -26,7 +22,6 @@
                 <li><a href="{{url_for('manage_employees')}}">Employees</a></li>
                 <li><a href="{{url_for('manage_products')}}">Products</a></li>
             </ul>
-			<!--TODO fix the position of theese buttons-->
 			<a href="#" class="login_btn">{{username}}</a>
 			<a href="{{url_for('logout')}}" class="login_btn">Logout</a>
         </nav>
@@ -40,8 +35,6 @@
 	</section>
                 {% block content %}
                 {% endblock %}
-    <!-- <h1 class="info">Вы не вошли в аккаунт</h1>
-    <a><button type="button" class="btn-new">Войти в аккаунт</button></a> -->
 
     <footer>
 		<div class="wrapper footer">

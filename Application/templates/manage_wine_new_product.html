@@ -1,6 +1,69 @@
-{% extends "layout.html" %}
+{% extends "layout_admin.html" %}
 {% block title %}
 New product
 {% endblock %}
 {% block content %}
+<section class="listings">
+    <div class="wrapper">  
+        <div class="more_listing">
+            <ul class="properties_list">
+                <form method="post">
+                    <p class="incorrect_input">{{invalid}}</p>
+                    <h1>New product</h1>
+                    <div class="form-group">
+                        <span>Article</span>
+                        <input name="article" type="text" class="form-field" pattern="[0-9]+$" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Name</span>
+                        <input name="name" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Type</span>
+                        <input name="type" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Country</span>
+                        <input name="country" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Region</span>
+                        <input name="region" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Vintage dating</span>
+                        <input name="vintage_dating" type="number" class="form-field" pattern="[0-9]+$" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Winery</span>
+                        <input name="winery" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Alcohol</span>
+                        <input name="alcohol" type="number" step="0.01" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Capacity</span>
+                        <input name="capacity" type="number" step="0.01" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Description</span>
+                        <input name="description" type="text" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Price</span>
+                        <input name="price" type="number" step="0.01" class="form-field" required/>
+                    </div>
+                    <div class="form-group">
+                        <span>Items left</span>
+                        <input name="items_left" type="number" class="form-field" pattern="[0-9]$" required/>
+                    </div>
+
+                    <br>
+                    <button type="submit" class="more_listing_btn">Add product</button>
+                </form>
+            </ul>
+        </div>
+    </div>
+</section>
 {% endblock %}
