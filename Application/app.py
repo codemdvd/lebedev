@@ -140,18 +140,34 @@ def order_info():
      return render_template('order.html', order=order, products=products, total_price=total_price)
 
 
-@app.route('/products')
+@app.route('/products', methods=['GET', 'POST'])
 def products():
      all_products = wine_products.find()
+     if not session.get('cart'):
+          session['cart'] = []
+
+     if request.args.get("article"):
+          session['cart'] += [{
+     'article': request.args.get("article"),
+     'amount': 0
+     }]
      return render_template('wine_products.html', products=all_products, 
                             logged_in=session.get('logged_in', False),
-                            username=session.get('username', None))
+                            username=session.get('username', None), session=session)
+
+
 
 @app.route('/shopping_cart')
+@requires_auth
 def shopping_cart():
+     cart_products = []
+     amount = 0
+     articles = [p['article'] for p in session['cart']]
+     for article in articles:
+          cart_products.append(wine_products.find_one({'article': article}))
      return render_template('wine_shopping_cart.html', 
                             logged_in=session.get('logged_in', False),
-                            username=session.get('username', None))
+                            username=session.get('username', None), cart_products=cart_products)
 
 @app.route('/manage_clients')
 @requires_admin
@@ -249,5 +265,7 @@ def new_employee():
 
      return render_template('manage_wine_new_employee.html',
                             username=session.get('username', None))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
