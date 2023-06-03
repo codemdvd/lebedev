@@ -1,6 +1,36 @@
 {% extends "layout.html" %}
 {% block title %}
-Shopping Cart
+Products
 {% endblock %}
 {% block content %}
+<form action="#" , method="POST">
+    <section class="listings">
+        <div class="wrapper">  
+            <ul class="properties_list">
+                {% if cart_products %}
+                {% for product in cart_products %}
+                <li>
+                    <div class="property_details">
+                        <h1>
+                            <a href="#">{{product['article']}} : {{product['name']}}</a>
+                            <h2>Type: {{product['type']}}</h2>
+                            <h2>Country: {{product['country']}}</h2>
+                            <h2>Vintage dating: {{product['vintage_dating']}}</h2>
+                            <h2>Winery: {{product['winery']}}</h2>
+                            <h2>Alcohol: {{product['alcohol']}}</h2>
+                            <h2>Capacity: {{product['capacity']}}</h2>
+                            {% for line in product['description'].split('\n') %}
+                            <h2>{{line}}</h2>
+                            {% endfor %}
+                            <h2>Price: {{product['price']}}</h2>
+                            <!-- <h2>Items left: {{product['items_left']}}</h2> -->
+                    </div>
+                </li>
+                {% endfor %}
+                {% else %}
+                <h1>Shopping cart is empty</h1>
+                {% endif %}
+        </div>
+    </section>
+</form>
 {% endblock %}

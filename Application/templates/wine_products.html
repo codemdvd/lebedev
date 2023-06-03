@@ -3,7 +3,7 @@
 Products
 {% endblock %}
 {% block content %}
-<form action="#" , method="get">
+<form action="#" , method="POST">
     <section class="listings">
         <div class="wrapper">
             <div class="search_fields">
@@ -25,8 +25,8 @@ Products
                             <h2>{{line}}</h2>
                             {% endfor %}
                             <h2>Price: {{product['price']}}</h2>
-                            <h2>Items left: {{product['items_left']}}</h2>
-                            <a href="#" class="more_listing_btn">Add to cart</a>
+                            <!-- <h2>Items left: {{product['items_left']}}</h2> -->
+                            <a href = "?article={{product['article']}}"><button class="more_listing_btn" type="button">Add to cart</button></a>
                     </div>
                 </li>
                 {% endfor %}
