@@ -182,3 +182,4 @@ db.wine.insertMany([
 ]);
 
 db.wine.createIndex({article: 'text', name: 'text', winery: 'text', country: 'text', region: 'text'});
+db.cart.createIndex({client_username: 1}, {unique: true});

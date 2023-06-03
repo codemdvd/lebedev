@@ -33,6 +33,7 @@ def requires_auth(f):
 
 @app.route('/')
 def auth():
+     session.clear()
      return redirect(url_for('login'))
 
 
@@ -54,6 +55,7 @@ def login():
      session['username'] = username
      session['admin'] = False
      session['logged_in'] = True
+     session['cart'] = get_user_cart(username)
 
      return redirect(url_for('products'))
 
@@ -142,32 +144,43 @@ def order_info():
 
 @app.route('/products', methods=['GET', 'POST'])
 def products():
-     all_products = wine_products.find()
-     if not session.get('cart'):
-          session['cart'] = []
+     all_products = None
+     if session.get('cart') == None:
+          session['cart'] = {}
+          if session.get('logged_in'):
+               create_emply_cart(session['username'])
 
      if request.args.get("article"):
-          session['cart'] += [{
-     'article': request.args.get("article"),
-     'amount': 0
-     }]
-     return render_template('wine_products.html', products=all_products, 
-                            logged_in=session.get('logged_in', False),
-                            username=session.get('username', None), session=session)
+          article = request.args.get("article")
+          cart = session['cart']
+          if cart.get(article) == None:
+               cart[article] = 0
+          cart[article] += 1
 
+          if session.get('logged_in'):
+               add_product_to_cart(session['username'], article, cart[article])
+          session['cart'] = cart
+
+     if request.form.get('search'):
+          all_products = search_wines(request.form['search'])
+     else:
+          all_products = get_all_products()
+          
+     return render_template('wine_products.html', products=all_products, 
+                         logged_in=session.get('logged_in', False),
+                         username=session.get('username', None), session=session)
 
 
 @app.route('/shopping_cart')
-@requires_auth
 def shopping_cart():
      cart_products = []
-     amount = 0
-     articles = [p['article'] for p in session['cart']]
+     articles = session['cart'].keys()
+     amounts = session['cart'].values()
      for article in articles:
           cart_products.append(wine_products.find_one({'article': article}))
      return render_template('wine_shopping_cart.html', 
                             logged_in=session.get('logged_in', False),
-                            username=session.get('username', None), cart_products=cart_products)
+                            username=session.get('username', None), cart_products=zip(cart_products, amounts))
 
 @app.route('/manage_clients')
 @requires_admin
@@ -176,7 +189,7 @@ def manage_clients():
      return render_template('manage_wine_clients.html', clients=clients,
                             username=session.get('username', None))
 
-@app.route('/mamage_orders')
+@app.route('/manage_orders')
 def manage_orders():
      if not session.get('username', False):
           return redirect(url_for('login'))

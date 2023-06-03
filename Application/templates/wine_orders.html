@@ -18,7 +18,7 @@ Orders
                             </a>
                         </h1>
                         <h2>Creation date: {{order.creation_date}}</h2>
-                        <h1>Total price: {{price}}€</h2>
+                        <h1>Total price: {{"%.2f€"|format(price)}}</h2>
                             {% if order.paid %}
                             <h2>Paid. Payment date: {{order.payment_date}}</h2>
                             {% else %}

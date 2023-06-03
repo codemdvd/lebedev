@@ -1093,3 +1093,18 @@ html {
       box-sizing: inherit;
   }
 }
+
+input.search {
+  font-size: medium;
+  height: 40px;
+  width: 50%;
+  font-family:'Verdana';
+  border: 0;
+  background: #f0f0f0;
+  padding: 0 1.6rem;
+  border-radius: 3px;
+  appearance: none; 
+  margin-bottom: 5%;
+  transition: all .3s cubic-bezier(0, 0, 0.43, 1.49);
+  z-index: 1;
+}

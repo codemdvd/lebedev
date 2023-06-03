@@ -1,8 +1,8 @@
 \connect orders
 
-INSERT INTO public.clients
-VALUES (1, 'Asap', 'Rocky', 'asaprocky', 'qwerty1234', '+17777777777', 'asap_rocky@gmail.com'),
-       (2, 'Travis', 'Scott', 'travisscott', 'qwerty1234', '+11111111111', 'travis_scott@gmail.com');
+INSERT INTO public.clients(first_name, second_name, client_login, client_password, phone_number, email)
+VALUES ('Asap', 'Rocky', 'asaprocky', 'qwerty1234', '+17777777777', 'asap_rocky@gmail.com'),
+       ('Travis', 'Scott', 'travisscott', 'qwerty1234', '+11111111111', 'travis_scott@gmail.com');
 
 INSERT INTO public.order_table(address, creation_date, payment_date, paid, order_list, client_id)
 VALUES 

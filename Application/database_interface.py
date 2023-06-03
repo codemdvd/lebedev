@@ -1,5 +1,6 @@
-from database_engine import employees_session, orders_session, wine_products
+from database_engine import employees_session, orders_session, wine_products, carts
 from models import Departments, Employees, Clients, OrderTable
+from bson.objectid import ObjectId
 from sqlalchemy import func
 import os
 
@@ -35,10 +36,6 @@ def client_authorize(username: str, password: str):
         return False
     return auth_result
 
-def search_wine(string: str, limit: int):
-    wines = wine_products.find({'$text': {'$search': string}}).limit(limit)
-    return wines
-
 def client_register(
     first_name: str,
     second_name: str,
@@ -61,6 +58,7 @@ def client_register(
         orders_session.commit()
         return 0
     except Exception as e:
+        print(e.with_traceback())
         return 1
 
 
@@ -82,3 +80,34 @@ def get_order_info(username: str, order_id: int):
 def get_product_info(product_id: str):
     product = wine_products.find_one({'article': product_id})
     return product
+
+def search_wines(search_text: str):
+    wines = wine_products.find({"$text": {"$search": search_text}})
+    return wines
+
+def add_product_to_cart(username: str, article: str, amount: int = 1):
+    wine_id = ObjectId(wine_products.find_one({'article': article})['_id'])
+    cart = carts.find_one({'client_username': username})['cart_list']
+
+    if wine_id not in [p['wine'] for p in cart]:
+        cart.append({'wine': wine_id, 'amount': amount})
+        print(cart)
+        carts.update_one({'client_username': username}, {'$set': {'cart_list': cart}})
+        return
+    
+    cart = [{'wine': wine_id, 'amount': amount} if p['wine'] == wine_id else p for p in cart]
+    carts.update_one({'client_username': username}, {'$set': {'cart_list': cart}})
+
+
+def create_emply_cart(username: str):
+    carts.insert_one({'client_username': username, 'cart_list': []})
+
+def get_user_cart(username: str):
+    cart_list = carts.find_one({'client_username': username})
+    if cart_list == None: return None
+
+    cart = {}
+    for c in cart_list['cart_list']:
+        wine = wine_products.find_one({'_id': c['wine']})
+        cart[wine['article']] = c['amount']
+    return cart if cart else None

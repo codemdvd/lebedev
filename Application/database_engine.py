@@ -29,3 +29,4 @@ orders_session = scoped_session(sessionmaker(bind=orders_engine))
 client = MongoClient('localhost', 27017, username='admin', password='qwerty1234')
 db = client.products
 wine_products = db.wine
+carts = db.cart
