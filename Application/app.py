@@ -2,13 +2,10 @@ from flask import Flask, session, redirect, render_template, url_for, request
 from functools import wraps
 from database_interface import *
 import os
-from database_engine import employees_session, orders_session, wine_products
-from models import Departments, Employees, Clients, OrderTable
 from datetime import datetime
-## TODO create a separate roads and html documents for client products and admin products
 
 app = Flask(__name__)
-app.secret_key = 'qwerty1234'
+app.secret_key = os.getenv('SUPERSECRETKEY') or 'qwerty1234'
 sessions = {}
 
 def requires_admin(f):
@@ -176,50 +173,40 @@ def products():
 ## TODO fix order_list filling
 @app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
-     cart_products = []
-     articles = session['cart'].keys()
-     amounts = session['cart'].values()
-     for article in articles:
-          cart_products.append(wine_products.find_one({'article': article}))
+     if request.method == 'GET':
+          cart_products = []
+          articles = session['cart'].keys()
+          amounts = session['cart'].values()
+          for article in articles:
+               cart_products.append(get_product_info(article))
+
+          cart_products = zip(cart_products, amounts) if len(cart_products) != 0 else None
+          return render_template('wine_shopping_cart.html', 
+                              logged_in=session.get('logged_in', False),
+                              username=session.get('username', None), cart_products=cart_products)
      
      if request.method=='POST':
+          cart = session['cart']
+          order_list = {}
+          for p in cart:
+               order_list[p] = {'price': get_product_info(p)['price'], 'amount': cart[p]}
+
           address = request.form['address']
           creation_date = datetime.now().date()
           payment_date = datetime.now().date()
           paid = True
-          ####
-          ####
-          # Wrong order_list filling
-          order_list = carts.find({'client_username': session['username']})
-          ####
-          ####
-          print(order_list)
-          client = orders_session.query(Clients).filter(Clients.log == session['username'])
-          for id in client:
-               client_id = id.client_id
-          print(address, creation_date, payment_date, paid, order_list, client_id)
-          order = OrderTable (
-               address=address,
-               creation_date=creation_date,
-               payment_date=payment_date,
-               paid=paid,
-               order_list=order_list,
-               client_id=client_id
-          )
-          orders_session.add(order)
-          orders_session.commit()
-          print(order)
+
+          create_order(session['username'], address, creation_date, payment_date, paid, order_list)
+          clear_cart(session['username'])
+          session['cart'] = {}
           return redirect(url_for('orders'))
-     return render_template('wine_shopping_cart.html', 
-                            logged_in=session.get('logged_in', False),
-                            username=session.get('username', None), cart_products=zip(cart_products, amounts))
 
 
 
 @app.route('/manage_clients')
 @requires_admin
 def manage_clients():
-     clients = orders_session.query(Clients).all()
+     clients = get_all_clients()
      return render_template('manage_wine_clients.html', clients=clients,
                             username=session.get('username', None))
 
@@ -227,7 +214,7 @@ def manage_clients():
 def manage_orders():
      if not session.get('username', False):
           return redirect(url_for('login'))
-     orders = orders_session.query(OrderTable).all()
+     orders = get_all_orders()
      return render_template('manage_wine_orders.html', orders=orders, 
                             logged_in=session.get('logged_in', False),
                             username=session.get('username', None))
@@ -235,7 +222,7 @@ def manage_orders():
 @app.route('/manage_employees')
 @requires_admin
 def manage_employees():
-     employees = employees_session.query(Employees).all()
+     employees = get_all_employees()
      print(session.get('logged_in', False))
      return render_template('manage_wine_employees.html', employees=employees,
                             username=session.get('username', None))
@@ -243,7 +230,7 @@ def manage_employees():
 @app.route('/manage_products')
 @requires_admin
 def manage_products():
-     all_products = wine_products.find()
+     all_products = get_all_products()
      return render_template('manage_wine_products.html', products=all_products,
                             username=session.get('username', None))
 
@@ -265,22 +252,10 @@ def new_product():
           price = request.form['price']
           items_left = int(request.form['items_left'])
 
-          wine_products.insert_one(
-               {
-                    'article': article,
-                    'name': name,
-                    'type': type,
-                    'country': country,
-                    'region': region,
-                    'vintage_dating': vintage_dating,
-                    'winery': winery,
-                    'alcohol': float(alcohol),
-                    'capacity': float(capacity),
-                    'description': description,
-                    'price': float(price),
-                    'items_left': items_left
-               }
-          )
+          add_procuct(article, name, type, country, region, vintage_dating, 
+                      winery, float(alcohol), float(capacity), description, 
+                      float(price), items_left)
+
      return render_template('manage_wine_new_product.html',
                             username=session.get('username', None))
 
@@ -297,22 +272,11 @@ def new_employee():
           emp_email = request.form['emp_email']
           dept_no = request.form['dept_no']
 
-          employee = Employees(
-                              emp_id=emp_id, 
-                              first_name=first_name, 
-                              second_name=second_name,
-                              emp_login=emp_login,
-                              emp_pass=emp_pass,
-                              emp_phone=emp_phone,
-                              emp_email=emp_email,
-                              dept_no=dept_no
-                               )
-          employees_session.add(employee)
-          employees_session.commit()
+          add_employee(emp_id, first_name, second_name, emp_login, emp_pass,
+                       emp_phone, emp_email, dept_no)
 
      return render_template('manage_wine_new_employee.html',
                             username=session.get('username', None))
-
 
 
 if __name__ == '__main__':

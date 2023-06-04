@@ -6,9 +6,10 @@ Products
 <form action="#" , method="POST">
     <section class="listings">
         <div class="wrapper">
-            <div class="search_fields">
-                <input type="search" placeholder="Search wine" name="search" class="search">
-            </div>    
+            <div class="form-group" style="margin-bottom: 5%;">
+                <span>Search wine</span>
+                <input name="search" type="search" class="form-field" placeholder="Name..." required/>
+            </div>  
             <ul class="properties_list">
                 {% for product in products %}
                 <li>

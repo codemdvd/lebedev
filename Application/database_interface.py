@@ -2,20 +2,12 @@ from database_engine import employees_session, orders_session, wine_products, ca
 from models import Departments, Employees, Clients, OrderTable
 from bson.objectid import ObjectId
 from sqlalchemy import func
-import os
+from datetime import date
 
 # Get all instances methods
 def get_all_orders():
     return orders_session.query(OrderTable).all()
 
-def get_all_clients():
-    return orders_session.query(Clients).all()
-
-def get_all_employees():
-    return employees_session.query(Employees).all()
-
-def get_all_products():
-    return wine_products.find()
 
 # Auth methods
 def employee_authorize(username: str, password: str):
@@ -65,7 +57,7 @@ def client_register(
 # Client methods
 def get_my_orders(username: str):
     orders = orders_session.query(OrderTable).join(Clients).where(Clients.log == username).all()
-    return orders
+    return orders[::-1]
 
 def get_order_info(username: str, order_id: int):
     if username:
@@ -111,3 +103,91 @@ def get_user_cart(username: str):
         wine = wine_products.find_one({'_id': c['wine']})
         cart[wine['article']] = c['amount']
     return cart if cart else None
+
+def clear_cart(username: str):
+    carts.update_one({'client_username': username}, {'$set': {'cart_list': []}})
+
+def create_order(
+    username: str,
+    address: str,
+    creation_date: date,
+    payment_date: date,
+    paid: bool,
+    order_list: dict
+):
+    client_id = orders_session.query(Clients).where(Clients.log == username).first().client_id
+    order = OrderTable(
+        address = address,
+        creation_date = creation_date,
+        payment_date = payment_date,
+        paid = paid,
+        order_list = order_list,
+        client_id = client_id
+    )
+    orders_session.add(order)
+    orders_session.commit()
+
+
+# Admin methods
+def get_all_clients():
+    return orders_session.query(Clients).all()
+
+def get_all_employees():
+    return employees_session.query(Employees).all()
+
+def get_all_products():
+    return wine_products.find()
+
+def add_procuct(
+    article: str,
+    name: str,
+    type: str,
+    country: str,
+    region: str,
+    vintage_dating: int,
+    winery: str,
+    alcohol: float,
+    capacity: float,
+    description: str,
+    price: float,
+    items_left: int
+):
+    wine_products.insert_one(
+               {
+                    'article': article,
+                    'name': name,
+                    'type': type,
+                    'country': country,
+                    'region': region,
+                    'vintage_dating': vintage_dating,
+                    'winery': winery,
+                    'alcohol': alcohol,
+                    'capacity': capacity,
+                    'description': description,
+                    'price': price,
+                    'items_left': items_left
+               }
+          )
+    
+def add_employee(
+        emp_id, 
+        first_name, 
+        second_name,
+        emp_login,
+        emp_pass,
+        emp_phone,
+        emp_email,
+        dept_no
+):
+    employee = Employees(
+        emp_id=emp_id, 
+        first_name=first_name, 
+        second_name=second_name,
+        emp_login=emp_login,
+        emp_pass=emp_pass,
+        emp_phone=emp_phone,
+        emp_email=emp_email,
+        dept_no=dept_no
+    )
+    employees_session.add(employee)
+    employees_session.commit()
