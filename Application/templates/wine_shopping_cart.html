@@ -22,7 +22,7 @@ Products
                             {% for line in product['description'].split('\n') %}
                             <h2>{{line}}</h2>
                             {% endfor %}
-                            <h1>Price: {{"%.2f€"|format(product['price'] * amount)}}</h1>
+                            <h1>Price: {{"%.2f€"|format(product['price'] * amount)}} ({{amount}})</h1>
                             <!-- <h2>Items left: {{product['items_left']}}</h2> -->
                     </div>
                 </li>
@@ -33,4 +33,29 @@ Products
         </div>
     </section>
 </form>
+<section class="listings">
+    <div class="wrapper">  
+        <div class="more_listing">
+            <ul class="properties_list">
+                <form method="post">
+                    <p class="incorrect_input">{{invalid}}</p>
+                    <h1>Make an order</h1>
+                    <div class="form-group">
+                        <span>Address</span>
+                        <input name="address" type="text" class="form-field" required/>
+                    </div>
+                    <div class="more_listing">
+                        <button type="submit" class="more_listing_btn">Make an order</button>
+                    </div>
+                </form>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+</section>
+
 {% endblock %}

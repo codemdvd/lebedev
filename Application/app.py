@@ -4,6 +4,7 @@ from database_interface import *
 import os
 from database_engine import employees_session, orders_session, wine_products
 from models import Departments, Employees, Clients, OrderTable
+from datetime import datetime
 ## TODO create a separate roads and html documents for client products and admin products
 
 app = Flask(__name__)
@@ -171,16 +172,49 @@ def products():
                          username=session.get('username', None), session=session)
 
 
-@app.route('/shopping_cart')
+
+## TODO fix order_list filling
+@app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
      cart_products = []
      articles = session['cart'].keys()
      amounts = session['cart'].values()
      for article in articles:
           cart_products.append(wine_products.find_one({'article': article}))
+     
+     if request.method=='POST':
+          address = request.form['address']
+          creation_date = datetime.now().date()
+          payment_date = datetime.now().date()
+          paid = True
+          ####
+          ####
+          # Wrong order_list filling
+          order_list = carts.find({'client_username': session['username']})
+          ####
+          ####
+          print(order_list)
+          client = orders_session.query(Clients).filter(Clients.log == session['username'])
+          for id in client:
+               client_id = id.client_id
+          print(address, creation_date, payment_date, paid, order_list, client_id)
+          order = OrderTable (
+               address=address,
+               creation_date=creation_date,
+               payment_date=payment_date,
+               paid=paid,
+               order_list=order_list,
+               client_id=client_id
+          )
+          orders_session.add(order)
+          orders_session.commit()
+          print(order)
+          return redirect(url_for('orders'))
      return render_template('wine_shopping_cart.html', 
                             logged_in=session.get('logged_in', False),
                             username=session.get('username', None), cart_products=zip(cart_products, amounts))
+
+
 
 @app.route('/manage_clients')
 @requires_admin
@@ -278,6 +312,7 @@ def new_employee():
 
      return render_template('manage_wine_new_employee.html',
                             username=session.get('username', None))
+
 
 
 if __name__ == '__main__':
