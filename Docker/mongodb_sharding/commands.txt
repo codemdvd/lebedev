@@ -1,0 +1,4 @@
+docker exec -d cfgsvr1 mongosh /temp/init.js
+docker exec -d shard1svr1 mongosh /temp/init.js
+docker exec -d shard2svr1 mongosh /temp/init.js
+docker exec -d mongos bash -c 'sleep 15; mongosh /temp/init.js'

@@ -1,5 +1,15 @@
+host1 = process.env.MONGODB_SERVER + ':50001';
+host2 = process.env.MONGODB_SERVER + ':50002';
+host3 = process.env.MONGODB_SERVER + ':50003';
+host4 = process.env.MONGODB_SERVER + ':50004';
+
+sh.addShard("shard1rs/" + host1.concat(',', host2));
+sh.addShard("shard2rs/" + host3.concat(',', host4));
+
+
+db = new Mongo().getDB("products");
 db.createUser({
-    user: process.env.MONGODB_USERNAME + 't',
+    user: process.env.MONGODB_USERNAME,
     pwd: process.env.MONGODB_PASSWORD,
     roles: [
         {
@@ -8,9 +18,7 @@ db.createUser({
         },
     ],
 });
-
-db = new Mongo().getDB("products");
-db.auth('root', 'qwerty1234');
+db.auth(process.env.MONGODB_USERNAME, process.env.MONGODB_PASSWORD);
 
 db.createCollection('wine', {
     validator: {

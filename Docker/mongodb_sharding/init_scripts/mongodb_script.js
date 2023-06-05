@@ -1,5 +1,6 @@
+db = new Mongo().getDB("products");
 db.createUser({
-    user: process.env.MONGODB_USERNAME + 't',
+    user: process.env.MONGODB_USERNAME,
     pwd: process.env.MONGODB_PASSWORD,
     roles: [
         {
@@ -8,9 +9,7 @@ db.createUser({
         },
     ],
 });
-
-db = new Mongo().getDB("products");
-db.auth('root', 'qwerty1234');
+db.auth(process.env.MONGODB_USERNAME, process.env.MONGODB_PASSWORD);
 
 db.createCollection('wine', {
     validator: {
