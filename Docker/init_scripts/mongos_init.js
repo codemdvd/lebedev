@@ -1,10 +1,12 @@
-host1 = process.env.MONGODB_SERVER + ':50001';
-host2 = process.env.MONGODB_SERVER + ':50002';
-host3 = process.env.MONGODB_SERVER + ':50003';
-host4 = process.env.MONGODB_SERVER + ':50004';
+db = new Mongo().getDB("admin");
+db.createUser({
+    user: process.env.ADMIN_USERNAME,
+    pwd: process.env.MONGODB_PASSWORD,
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+});
 
-sh.addShard("shard1rs/" + host1.concat(',', host2));
-sh.addShard("shard2rs/" + host3.concat(',', host4));
+sh.addShard("shard1rs/shard1svr1:27017,shard1svr2:27017");
+sh.addShard("shard2rs/shard2svr1:27017,shard2svr2:27017" );
 
 
 db = new Mongo().getDB("products");
@@ -154,6 +156,9 @@ db.createCollection('cart', {
         }
     }
 });
+
+sh.shardCollection("products.wine", {article: "hashed"});
+sh.shardCollection("products.cart", {client_username: "hashed"});
 
 db.wine.insertMany([
     {
