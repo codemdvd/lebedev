@@ -18,4 +18,5 @@ docker exec -d mongos bash -c 'sleep 15; mongosh /temp/init.js'
 Server runs on port 3000, you can access it from localhost with the same port
 
 default login:password for regular user is asaprocky:qwerty1234;
+
 default login:password for admin user is @prokhorkot:qwerty1234
