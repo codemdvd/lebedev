@@ -2,7 +2,7 @@
 _flask + postgres + mongodb(sharded) in docker-compose_
 
 To run application follow this commands:
-- To run build images and run docker-compsoe
+- To build images and run docker-compose
 ```bash
 docker-compose -f Docker/docker-compose.yaml up --build -d
 ```
