@@ -1,10 +1,8 @@
 from database_engine import employees_session, orders_session, redis_client as r
-from models import Departments, Employees, Clients, OrderTable
-from bson.objectid import ObjectId
+from models import Employees, Clients, OrderTable
 from sqlalchemy import func
 from datetime import date
 from models import Wine
-import json
 
 
 # Get all instances methods
@@ -22,6 +20,7 @@ def employee_authorize(username: str, password: str):
         return False
     return auth_result
 
+
 def client_authorize(username: str, password: str):
     if not (isinstance(username, str) and isinstance(password, str)):
         raise TypeError('Both arguments should be str')
@@ -30,6 +29,7 @@ def client_authorize(username: str, password: str):
     if auth_result is None:
         return False
     return auth_result
+
 
 def client_register(
     first_name: str,
@@ -62,6 +62,7 @@ def get_my_orders(username: str):
     orders = orders_session.query(OrderTable).join(Clients).where(Clients.log == username).all()
     return orders[::-1]
 
+
 def get_order_info(username: str, order_id: int):
     if username:
         order = orders_session.query(OrderTable).join(Clients)\
@@ -72,12 +73,14 @@ def get_order_info(username: str, order_id: int):
         
     return order
 
+
 def get_product_info(article: str):
     try:
         product = Wine.objects(article=article).get()
         return product
     except Wine.DoesNotExist:
         return None
+
 
 def search_wines(search_text: str):
     wines = Wine.objects.filter(name__icontains=search_text).allow_filtering()
@@ -97,10 +100,6 @@ def add_product_to_cart(username: str, article: str, amount: int = 1):
     print(f"Product {article} updated/added to {username}'s cart with amount {item_amount}.")
 
 
-# def create_emply_cart(username: str):
-#     carts.insert_one({'client_username': username, 'cart_list': []})
-
-
 def get_user_cart(username: str):
     cart_key = f"cart:{username}"
     cart_items = r.hgetall(cart_key)
@@ -114,10 +113,12 @@ def get_user_cart(username: str):
     print("Cart found")
     return cart if cart else None
 
+
 def clear_cart(username: str):
     cart_key = f"cart:{username}"
     r.delete(cart_key)
     print(f"Cart for {username} has been cleared.")
+
 
 def create_order(
     username: str,
@@ -144,8 +145,10 @@ def create_order(
 def get_all_clients():
     return orders_session.query(Clients).all()
 
+
 def get_all_employees():
     return employees_session.query(Employees).all()
+
 
 def get_all_products():
     try:
@@ -154,6 +157,7 @@ def get_all_products():
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
+
 
 def add_product(
     article: str,
@@ -187,7 +191,8 @@ def add_product(
         return 0
     except:
         return 1
-    
+
+
 def add_employee(
         emp_id, 
         first_name, 

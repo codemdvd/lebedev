@@ -32,7 +32,3 @@ redis_client = redis.Redis(host="127.0.0.1", port=6379, decode_responses=True)
 
 connection.setup(['127.0.0.1'], "wine_catalog", port=9042, protocol_version=3)
 sync_table(Wine)
-# client = MongoClient('mongos', 27017, username='admin', password='qwerty1234')
-# db = client.products
-# wine_products = db.wine
-# carts = db.cart
