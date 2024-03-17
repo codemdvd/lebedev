@@ -1,3 +1,5 @@
+from cassandra.cqlengine import columns
+from cassandra.cqlengine.models import Model
 
 from sqlalchemy import Column
 from sqlalchemy import String, Integer, Date, Boolean, JSON, Sequence
@@ -11,6 +13,12 @@ class Departments(Base):
     dept_no = Column('dept_no', String(4), primary_key=True)
     dept_name = Column('dept_name', String(40))
 
+    def to_dict(self):
+        return {
+            'dept_no': self.dept_no, 
+            'dept_name': self.dept_name
+            }
+
 
 class Employees(Base):
     __tablename__ = 'employees'
@@ -23,6 +31,17 @@ class Employees(Base):
     emp_email = Column('emp_email', String(40))
     dept_no = Column('dept_no', String(4), ForeignKey('departments.dept_no'))
 
+    def to_dict(self):
+        return {
+            'emp_id': self.emp_id, 
+            'first_name': self.first_name, 
+            'second_name': self.second_name,
+            'emp_login': self.emp_login, 
+            'emp_phone': self.emp_phone,
+            'emp_email': self.emp_email, 
+            'dept_no': self.dept_no
+        }
+
 
 class Clients(Base):
     __tablename__ = 'clients'
@@ -34,6 +53,16 @@ class Clients(Base):
     phone_number = Column('phone_number', String(17))
     email = Column('email', String(40))
 
+    def to_dict(self):
+        return {
+            'client_id': self.client_id, 
+            'first_name': self.first_name, 
+            'second_name': self.second_name,
+            'log': self.log, 
+            'phone_number': self.phone_number, 
+            'email': self.email
+        }
+
 
 class OrderTable(Base):
     __tablename__ = 'order_table'
@@ -44,3 +73,42 @@ class OrderTable(Base):
     paid = Column('paid', Boolean)
     order_list = Column('order_list', JSON)
     client_id = Column('client_id', Integer, ForeignKey('clients.client_id'))
+    
+    def to_dict(self):
+        return {
+            'order_id': self.order_id, 'address': self.address, 'creation_date': str(self.creation_date),
+            'payment_date': str(self.payment_date), 'paid': self.paid, 'order_list': self.order_list,
+            'client_id': self.client_id
+        }
+
+
+class Wine(Model):
+    __keyspace__ = 'wine_catalog'
+    article = columns.Text(primary_key=True)
+    name = columns.Text()
+    type = columns.Text()
+    country = columns.Text()
+    region = columns.Text()
+    vintage_dating = columns.Integer()
+    winery = columns.Text()
+    alcohol = columns.Double()
+    capacity = columns.Double()
+    description = columns.Text()
+    price = columns.Double()
+    items_left = columns.Integer()
+
+    def to_dict(self):
+        return {
+            'article': self.article,
+            'name': self.name,
+            'type': self.type,
+            'country': self.country,
+            'region': self.region,
+            'vintage_dating': self.vintage_dating,
+            'winery': self.winery,
+            'alcohol': self.alcohol,
+            'capacity': self.capacity,
+            'description': self.description,
+            'price': self.price,
+            'items_left': self.items_left
+        }

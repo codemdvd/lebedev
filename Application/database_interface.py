@@ -1,8 +1,11 @@
-from database_engine import employees_session, orders_session, wine_products, carts
+from database_engine import employees_session, orders_session, redis_client as r
 from models import Departments, Employees, Clients, OrderTable
 from bson.objectid import ObjectId
 from sqlalchemy import func
 from datetime import date
+from models import Wine
+import json
+
 
 # Get all instances methods
 def get_all_orders():
@@ -69,43 +72,52 @@ def get_order_info(username: str, order_id: int):
         
     return order
 
-def get_product_info(product_id: str):
-    product = wine_products.find_one({'article': product_id})
-    return product
+def get_product_info(article: str):
+    try:
+        product = Wine.objects(article=article).get()
+        return product
+    except Wine.DoesNotExist:
+        return None
 
 def search_wines(search_text: str):
-    wines = wine_products.find({"$text": {"$search": search_text}})
-    return wines
+    wines = Wine.objects.filter(name__icontains=search_text).allow_filtering()
+    return list(wines)
+
 
 def add_product_to_cart(username: str, article: str, amount: int = 1):
-    wine_id = ObjectId(wine_products.find_one({'article': article})['_id'])
-    cart = carts.find_one({'client_username': username})['cart_list']
+    cart_key = f"cart:{username}"
+    item_key = f"item:{article}"  
+    existing_item = r.hget(cart_key, item_key)
+    if existing_item:
+        item_amount = int(existing_item)
+        item_amount += amount
+    else:
+        item_amount = amount
+    r.hset(cart_key, item_key, item_amount)
+    print(f"Product {article} updated/added to {username}'s cart with amount {item_amount}.")
 
-    if wine_id not in [p['wine'] for p in cart]:
-        cart.append({'wine': wine_id, 'amount': amount})
-        print(cart)
-        carts.update_one({'client_username': username}, {'$set': {'cart_list': cart}})
-        return
-    
-    cart = [{'wine': wine_id, 'amount': amount} if p['wine'] == wine_id else p for p in cart]
-    carts.update_one({'client_username': username}, {'$set': {'cart_list': cart}})
 
+# def create_emply_cart(username: str):
+#     carts.insert_one({'client_username': username, 'cart_list': []})
 
-def create_emply_cart(username: str):
-    carts.insert_one({'client_username': username, 'cart_list': []})
 
 def get_user_cart(username: str):
-    cart_list = carts.find_one({'client_username': username})
-    if cart_list == None: return None
-
+    cart_key = f"cart:{username}"
+    cart_items = r.hgetall(cart_key)
+    if not cart_items:
+        print("Cart not found")
+        return None
     cart = {}
-    for c in cart_list['cart_list']:
-        wine = wine_products.find_one({'_id': c['wine']})
-        cart[wine['article']] = c['amount']
+    for item_key, amount in cart_items.items():
+        article = item_key.split(":")[1]
+        cart[article] = int(amount)
+    print("Cart found")
     return cart if cart else None
 
 def clear_cart(username: str):
-    carts.update_one({'client_username': username}, {'$set': {'cart_list': []}})
+    cart_key = f"cart:{username}"
+    r.delete(cart_key)
+    print(f"Cart for {username} has been cleared.")
 
 def create_order(
     username: str,
@@ -136,9 +148,14 @@ def get_all_employees():
     return employees_session.query(Employees).all()
 
 def get_all_products():
-    return wine_products.find()
+    try:
+        products = Wine.objects.all()
+        return list(products)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
 
-def add_procuct(
+def add_product(
     article: str,
     name: str,
     type: str,
@@ -152,22 +169,24 @@ def add_procuct(
     price: float,
     items_left: int
 ):
-    wine_products.insert_one(
-               {
-                    'article': article,
-                    'name': name,
-                    'type': type,
-                    'country': country,
-                    'region': region,
-                    'vintage_dating': vintage_dating,
-                    'winery': winery,
-                    'alcohol': alcohol,
-                    'capacity': capacity,
-                    'description': description,
-                    'price': price,
-                    'items_left': items_left
-               }
-          )
+    try:
+        Wine.create(
+            article=article,
+            name=name,
+            type=type,
+            country=country,
+            region=region,
+            vintage_dating=vintage_dating,
+            winery=winery,
+            alcohol=alcohol,
+            capacity=capacity,
+            description=description,
+            price=price,
+            items_left=items_left
+        )
+        return 0
+    except:
+        return 1
     
 def add_employee(
         emp_id, 
@@ -179,15 +198,20 @@ def add_employee(
         emp_email,
         dept_no
 ):
-    employee = Employees(
-        emp_id=emp_id, 
-        first_name=first_name, 
-        second_name=second_name,
-        emp_login=emp_login,
-        emp_pass=emp_pass,
-        emp_phone=emp_phone,
-        emp_email=emp_email,
-        dept_no=dept_no
-    )
-    employees_session.add(employee)
-    employees_session.commit()
+    try:
+        employee = Employees(
+            emp_id=emp_id, 
+            first_name=first_name, 
+            second_name=second_name,
+            emp_login=emp_login,
+            emp_pass=emp_pass,
+            emp_phone=emp_phone,
+            emp_email=emp_email,
+            dept_no=dept_no
+        )
+        employees_session.add(employee)
+        employees_session.commit()
+        return 0
+    except Exception as e:
+        print(e.with_traceback())
+        return 1
