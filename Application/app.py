@@ -4,7 +4,6 @@ from database_interface import *
 import os
 from datetime import datetime
 
-
 app = Flask(__name__)
 app.secret_key = os.getenv('SUPERSECRETKEY') or 'qwerty1234'
 sessions = {}
@@ -20,7 +19,9 @@ def requires_admin(f):
             return jsonify({'status': 'error', 'message': 'Admin privileges required'}), 403
 
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def requires_auth(f):
     @wraps(f)
@@ -28,6 +29,7 @@ def requires_auth(f):
         if 'username' not in session:
             return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -59,36 +61,35 @@ def login_admin():
         if not result:
             # Instead of rendering a template, return a JSON response indicating login failure
             return jsonify({'status': 'error', 'message': 'Incorrect login or password'}), 401
-        
+
         session['username'] = username
         session['admin'] = True
         session['logged_in'] = True
 
         # Instead of redirecting, return a JSON response indicating successful admin login
         return jsonify({'status': 'success', 'message': 'Admin login successful'})
-    
+
     # If the request method is GET or any method other than POST, inform the user about the allowed method
     return jsonify({'status': 'error', 'message': 'Method not allowed. Use POST for login.'}), 405
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-     if request.method == 'POST':
-          first_name = request.form['first_name']
-          second_name = request.form['second_name']
-          phone_number = request.form['phone_number']
-          email = request.form['email']
-          username = request.form['username']
-          password = request.form['password']
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        second_name = request.form['second_name']
+        phone_number = request.form['phone_number']
+        email = request.form['email']
+        username = request.form['username']
+        password = request.form['password']
 
-          result = client_register(first_name, second_name, phone_number, 
-                    email, username, password)
+        result = client_register(first_name, second_name, phone_number,
+                                 email, username, password)
 
-          if result != 0:
-               return jsonify({'status': 'error', 'message': 'Registration failed'}), 400
-          return jsonify({'status': 'success', 'message': 'Registration successful'}), 201
-     return jsonify({'status': 'error', 'message': 'Method not allowed'}), 405
-
+        if result != 0:
+            return jsonify({'status': 'error', 'message': 'Registration failed'}), 400
+        return jsonify({'status': 'success', 'message': 'Registration successful'}), 201
+    return jsonify({'status': 'error', 'message': 'Method not allowed'}), 405
 
 
 @app.route('/logout')
@@ -101,7 +102,7 @@ def logout():
 def orders():
     if not session.get('username', False):
         return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
-    
+
     orders = get_my_orders(session['username'])
     total_prices = [sum([(p['price']) * p['amount'] for p in order.order_list.values()]) for order in orders]
     orders_data = [{'order': order.to_dict(), 'total_price': price} for order, price in zip(orders, total_prices)]
@@ -114,13 +115,13 @@ def order_info():
     args = request.args
     if not args.get('order_id', default=False):
         return jsonify({'status': 'error', 'message': 'Order ID required'}), 400
-    
+
     # Assuming get_order_info and get_product_info functions are modified to return dictionaries
     if session['admin']:
         order = get_order_info(None, args['order_id'])
     else:
         order = get_order_info(session['username'], args['order_id'])
-    
+
     products = [get_product_info(p).to_dict() for p in order.order_list]
     total_price = sum([(p['price']) * p['amount'] for p in order.order_list.values()])
     return jsonify({'status': 'success', 'order': order.to_dict(), 'products': products, 'total_price': total_price})
@@ -153,8 +154,7 @@ def products():
             return jsonify({'status': 'error', 'message': 'Search query not provided'}), 400
 
 
-
-## TODO fix order_list filling
+# TODO fix order_list filling
 @app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
     if request.method == 'GET':
@@ -166,7 +166,8 @@ def shopping_cart():
 
     elif request.method == 'POST':
         cart = session.get('cart', {})
-        order_list = {p: {'price': get_product_info(p).to_dict()['price'], 'amount': amount} for p, amount in cart.items()}
+        order_list = {p: {'price': get_product_info(p).to_dict()['price'], 'amount': amount} for p, amount in
+                      cart.items()}
         address = request.form.get('address')
         creation_date = datetime.now().date()
         payment_date = datetime.now().date()
@@ -176,8 +177,6 @@ def shopping_cart():
         clear_cart(session['username'])
         session['cart'] = {}
         return jsonify({'status': 'success', 'message': 'Order placed successfully'})
-
-
 
 
 @app.route('/manage_clients')
@@ -263,7 +262,6 @@ def new_employee_api():
 
     # For GET request or other methods, indicate that only POST is allowed
     return jsonify({'status': 'error', 'message': 'Method not allowed'}), 405
-
 
 
 if __name__ == '__main__':
