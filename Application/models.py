@@ -8,6 +8,7 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
+
 class Departments(Base):
     __tablename__ = 'departments'
     dept_no = Column('dept_no', String(4), primary_key=True)
