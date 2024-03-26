@@ -6,12 +6,17 @@ from cassandra.cqlengine import connection
 from models import Wine
 import redis
 
+
+pgpool_ports = [5560, 5570]
+port = pgpool_ports[0]
+print(f'current pg port:{port}')
+
 employeesDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
     host='localhost',
-    port=5560,
+    port=port,
     database='employees'
 )
 
@@ -20,7 +25,7 @@ ordersDB_url = URL.create(
     username='postgres',
     password='qwerty1234',
     host='localhost',
-    port=5560,
+    port=port,
     database='orders'
 )
 
