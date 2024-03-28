@@ -10,8 +10,8 @@ employeesDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
-    host='localhost',
-    port=5560,
+    host='pgpool_1',
+    port=5432, #port=5560,
     database='employees'
 )
 
@@ -19,8 +19,8 @@ ordersDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
-    host='localhost',
-    port=5560,
+    host='pgpool_1',
+    port=5432,#port=5560,
     database='orders'
 )
 
@@ -30,7 +30,7 @@ orders_engine = create_engine(ordersDB_url)
 employees_session = scoped_session(sessionmaker(bind=employees_engine))
 orders_session = scoped_session(sessionmaker(bind=orders_engine))
 
-redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
+redis_client = redis.Redis(host='redis', port=6379, decode_responses=True)
 
-connection.setup(['localhost'], 'wine_catalog', port=9042, protocol_version=3)
+connection.setup(['cassandra'], 'wine_catalog', port=9042, protocol_version=3)
 sync_table(Wine)
