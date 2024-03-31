@@ -1,99 +1,137 @@
 version: '3'
 
 services:
-  pg_master:
-    image: bitnami/postgresql
-    container_name: pg_master
+  pg-0:
+    image: bitnami/postgresql-repmgr
+    container_name: pg-0
     ports:
       - '5555:5432'
     volumes:
       - ../PostgreSQL:/docker-entrypoint-initdb.d
     environment:
-      POSTGRESQL_REPLICATION_MODE: master
-      POSTGRESQL_REPLICATION_USER: ${POSTGRES_USER}
-      POSTGRESQL_REPLICATION_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
       POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRESQL_DATABASE: postgres
+      POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 1
+      REPMGR_PRIMARY_HOST: pg-0
+      REPMGR_PARTNER_NODES: pg-1,pg-0
+      REPMGR_NODE_NAME: pg-0
+      REPMGR_NODE_NETWORK_NAME: pg-0
+      REPMGR_USERNAME: repmgr
+      REPMGR_PASSWORD: repmgrpassword
 
-  pg_replica:
-    image: bitnami/postgresql
-    container_name: pg_replica
+  pg-1:
+    image: bitnami/postgresql-repmgr
+    container_name: pg-1
     ports:
       - '5556:5432'
-    depends_on:
-      - pg_master
+    volumes:
+      - ../PostgreSQL:/docker-entrypoint-initdb.d
     environment:
-      POSTGRESQL_REPLICATION_MODE: slave
-      POSTGRESQL_REPLICATION_USER: ${POSTGRES_USER}
-      POSTGRESQL_REPLICATION_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRESQL_MASTER_HOST: pg_master
+      POSTGRESQL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
       POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_DATABASE: postgres
+      POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 1
+      REPMGR_PRIMARY_HOST: pg-0
+      REPMGR_PARTNER_NODES: pg-0,pg-1
+      REPMGR_NODE_NAME: pg-1
+      REPMGR_NODE_NETWORK_NAME: pg-1
+      REPMGR_USERNAME: repmgr
+      REPMGR_PASSWORD: repmgrpassword
 
-  pgpool_1:
+  pgpool-1:
     image: bitnami/pgpool
-    container_name: pgpool_1
+    container_name: pgpool-1
     ports:
       - '5560:5432'
-    depends_on:
-      - pg_master
     environment:
-      PGPOOL_BACKEND_NODES: 0:pg_master:5432,1:pg_replica:5432
+      PGPOOL_BACKEND_NODES: 0:pg-0:5432,1:pg-1:5432
+      PGPOOL_SR_CHECK_USER: repmgr
+      PGPOOL_SR_CHECK_PASSWORD: repmgrpassword
+      PGPOOL_ENABLE_LDAP: no
       PGPOOL_POSTGRES_USERNAME: ${POSTGRES_USER}
       PGPOOL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPOOL_ADMIN_USERNAME: ${POSTGRES_USER}
       PGPOOL_ADMIN_PASSWORD: ${POSTGRES_PASSWORD}
       PGPOOL_ENABLE_LOAD_BALANCING: yes
       PGPOOL_ENABLE_STATEMENT_LOAD_BALANCING: yes
-      PGPOOL_NUM_INIT_CHILDREN: 10
-      PGPOOL_SR_CHECK_USER: ${POSTGRES_USER}
-      PGPOOL_SR_CHECK_PASSWORD: ${POSTGRES_PASSWORD}
-      PGPOOL_HEALTH_CHECK_MAX_RETRIES: 1
+      PGPOOL_POSTGRES_CUSTOM_USERS: ${POSTGRES_USER}
+      PGPOOL_POSTGRES_CUSTOM_PASSWORDS: ${POSTGRES_PASSWORD}
 
-  pgpool_2:
+  pgpool-2:
     image: bitnami/pgpool
-    container_name: pgpool_2
+    container_name: pgpool-2
     ports:
       - '5570:5432'
-    depends_on:
-      - pg_master
     environment:
-      PGPOOL_BACKEND_NODES: 0:pg_master:5432,1:pg_replica:5432
+      PGPOOL_BACKEND_NODES: 0:pg-0:5432,1:pg-1:5432
+      PGPOOL_SR_CHECK_USER: repmgr
+      PGPOOL_SR_CHECK_PASSWORD: repmgrpassword
+      PGPOOL_ENABLE_LDAP: no
       PGPOOL_POSTGRES_USERNAME: ${POSTGRES_USER}
       PGPOOL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPOOL_ADMIN_USERNAME: ${POSTGRES_USER}
       PGPOOL_ADMIN_PASSWORD: ${POSTGRES_PASSWORD}
       PGPOOL_ENABLE_LOAD_BALANCING: yes
       PGPOOL_ENABLE_STATEMENT_LOAD_BALANCING: yes
-      PGPOOL_NUM_INIT_CHILDREN: 10
-      PGPOOL_SR_CHECK_USER: ${POSTGRES_USER}
-      PGPOOL_SR_CHECK_PASSWORD: ${POSTGRES_PASSWORD}
-      PGPOOL_HEALTH_CHECK_MAX_RETRIES: 1
+      PGPOOL_POSTGRES_CUSTOM_USERS: ${POSTGRES_USER}
+      PGPOOL_POSTGRES_CUSTOM_PASSWORDS: ${POSTGRES_PASSWORD}
 
-  cassandra:
-    container_name: cassandra
+  cassandra_1:
+    container_name: cassandra_1
     image: cassandra
     ports:
       - '7000:7000'
       - '9042:9042'
     environment:
-      - 'MAX_HEAP_SIZE=256M'
-      - 'HEAP_NEWSIZE=128M'
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=128M
+      - CASSANDRA_SEEDS=cassandra_1,cassandra_2,cassandra_3
+    restart: no
+
+  cassandra_2:
+    container_name: cassandra_2
+    image: cassandra
+    environment:
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=128M
+      - CASSANDRA_SEEDS=cassandra_1,cassandra_2,cassandra_3
+    restart: no
+
+  cassandra_3:
+    container_name: cassandra_3
+    image: cassandra
+    environment:
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=128M
+      - CASSANDRA_SEEDS=cassandra_1,cassandra_2,cassandra_3
     restart: no
 
   cassandra-load-keyspace:
     container_name: cassandra-load-keyspace
     image: cassandra
     depends_on:
-      - cassandra
+      - cassandra_1
     volumes:
       - ./init-scripts/cassandra/schema.cql:/schema.cql
-    command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
+    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra_1 -f /schema.cql"
 
-  redis:
-    container_name: redis
+  redis_master:
+    container_name: redis_master
     image: redis
     ports:
       - '6379:6379'
+
+  redis_slave:
+    container_name: redis_slave
+    image: redis
+    ports:
+      - '6380:6379'
+    command: redis-server --slaveof redis_master 6379
+    depends_on:
+      - redis_master
 
   flask_app:
     container_name: flaskapp
@@ -104,17 +142,15 @@ services:
     volumes:
       - ../Application:/app
     depends_on:
-      - cassandra
+      - cassandra_1
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
   nginx:
     image: nginx
     volumes:
       - ../Nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - flask_app
-
-

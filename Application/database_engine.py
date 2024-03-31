@@ -7,16 +7,11 @@ from models import Wine
 import redis
 
 
-pgpool_ports = [5560, 5570]
-port = pgpool_ports[0]
-print(f'current pg port:{port}')
-
 employeesDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
-    host='pgpool_1',
-    port=5432, #port=5560,
+    host='pgpool-1',
     database='employees'
 )
 
@@ -24,9 +19,7 @@ ordersDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
-
-    host='pgpool_1',
-    port=5432,#port=5560,
+    host='pgpool-1',
     database='orders'
 )
 
@@ -36,7 +29,8 @@ orders_engine = create_engine(ordersDB_url)
 employees_session = scoped_session(sessionmaker(bind=employees_engine))
 orders_session = scoped_session(sessionmaker(bind=orders_engine))
 
-redis_client = redis.Redis(host='redis', port=6379, decode_responses=True)
+redis_client = redis.Redis(host='redis_master', port=6379, decode_responses=True)
 
-connection.setup(['cassandra'], 'wine_catalog', port=9042, protocol_version=3)
+connection.setup(['cassandra_1', 'cassandra_2', 'cassandra_3'], 'wine_catalog',
+                 port=9042, protocol_version=3)
 sync_table(Wine)
