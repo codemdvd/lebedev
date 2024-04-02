@@ -165,7 +165,7 @@ services:
     volumes:
       - ../Nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - '80:80'
+      - '81:80'
     depends_on:
       - flask_app_1
       - flask_app_2
@@ -176,7 +176,19 @@ services:
     volumes:
       - ../Nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - '81:80'
+      - '82:80'
     depends_on:
       - flask_app_1
       - flask_app_2
+
+  balanced_nginx:
+    image: nginx
+    container_name: balanced_nginx
+    volumes:
+      - ../Nginx/balanced_nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - nginx_1
+      - nginx_2
+
