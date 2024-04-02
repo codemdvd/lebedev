@@ -4,6 +4,7 @@ import time
 import random
 import matplotlib.pyplot as plt
 
+
 # Функция для отправки GET-запросов к API
 def send_get_request(session, url, user_agent):
     start_time = time.time()
@@ -12,13 +13,15 @@ def send_get_request(session, url, user_agent):
     end_time = time.time()
     return end_time - start_time
 
+
 # Функция для отправки POST-запросов к API
 def send_post_request(session, url, data, user_agent):
     start_time = time.time()
     session.headers.update({'User-Agent': user_agent})
-    response = session.post(url, data=data)
+    session.post(url, data=data)
     end_time = time.time()
     return end_time - start_time
+
 
 # Функция для выполнения тестирования для заданного количества запросов и URL
 def run_test(url, num_requests, user_agents):
@@ -33,6 +36,7 @@ def run_test(url, num_requests, user_agents):
             time_taken = send_post_request(session, url, {}, user_agent)
         times.append(time_taken)
     return times
+
 
 # Функция для отправки запросов с разных устройств одновременно
 def send_requests_concurrently(url, num_requests, user_agents):
@@ -50,9 +54,18 @@ def send_requests_concurrently(url, num_requests, user_agents):
     for thread in threads:
         thread.join()
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
+    # авторизация администратора
+    curr_session = requests.Session()
+    login = curr_session.post(url='http://localhost:80/login_admin', data={'username': '@prokhorkot',
+                                                                           'password': 'qwerty1234'})
+    print(login.content)
+    
     # Задаем URL
-    api_url = 'http://example.com/api'
+    pg_url = 'http://localhost:80/manage_clients'
+    redis_url = 'http://localhost:80/shopping_cart'
+    cassandra_url = 'http://localhost:80/products'
 
     # Задаем количество запросов для тестирования
     num_requests = 10
@@ -63,13 +76,3 @@ if __name__ == "__main__":
         'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
         'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.3'
     ]
-
-    # Выполняем тестирование
-    send_requests_concurrently(api_url, num_requests, user_agents)
-
-    # Выводим гистограмму времени выполнения
-    plt.hist(times, bins=10)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Frequency')
-    plt.title('Time Taken for Each Request')
-    plt.show()
