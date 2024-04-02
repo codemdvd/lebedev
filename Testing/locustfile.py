@@ -24,9 +24,5 @@ class WebsiteTestUser(HttpUser):
         self.client.post('http://localhost:80/maange_clients', {})
 
     @task(5)
-    def post_redis(self):
-        self.client.post('http://localhost:80/shopping_cart', {})
-
-    @task(6)
     def post_cassandra(self):
         self.client.post('http://localhost:80/products', {})

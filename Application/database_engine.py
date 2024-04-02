@@ -19,7 +19,7 @@ ordersDB_url = URL.create(
     'postgresql',
     username='postgres',
     password='qwerty1234',
-    host='pgpool-1',
+    host='pgpool-2',
     database='orders'
 )
 
