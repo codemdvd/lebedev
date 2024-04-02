@@ -192,3 +192,13 @@ services:
       - nginx_1
       - nginx_2
 
+  pgpool_balancer:
+    image: nginx
+    container_name: pgpool_balancer
+    volumes:
+      - ../Nginx/pgpool_balancer_nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '5432:5432'
+    depends_on:
+      - pgpool-1
+      - pgpool-2
